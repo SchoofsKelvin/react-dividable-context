@@ -38,6 +38,12 @@ const context = create({});
 ```
 
 ## Usage
+```bash
+npm install --save react-dividable-context;
+# or
+yarn add react-dividable-context;
+```
+
 ```ts
 import * as React from 'react';
 import create from 'react-dividable-context';
