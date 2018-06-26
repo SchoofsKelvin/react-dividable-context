@@ -1,0 +1,29 @@
+{
+    "name": "react-dividable-context",
+    "version": "1.0.0",
+    "description": "An efficient way of having one React Context instead of several, without unnecessary re-rendering",
+    "dependencies": {},
+    "peerDependencies": {
+        "react": "^16.3.0",
+        "react-dom": "^16.3.0"
+    },
+    "devDependencies": {
+        "react": "^16.3.0",
+        "react-dom": "^16.3.0",
+        "@types/react": "^16.3.0",
+        "@types/react-dom": "^16.0.6",
+        "typescript": "^2.9.2"
+    },
+    "main": "lib/index.js",
+    "types": "lib/index.d.ts",
+    "scripts": {
+        "build": "tsc",
+        "prepublish": "npm run build"
+    },
+    "author": {
+        "name": "Kelvin Schoofs",
+        "email": "schoofs.kelvin@gmail.com"
+    },
+    "license": "GLP-3.0",
+    "private": true
+}
