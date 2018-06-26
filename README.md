@@ -34,7 +34,6 @@ const context = create({});
             {data => <p>This one updates, though. {Date.now()}</p>}
         </context.consumer>
     </context.provider>
-);
 // ...
 ```
 
