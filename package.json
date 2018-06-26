@@ -18,13 +18,12 @@
     "types": "lib/index.d.ts",
     "scripts": {
         "build": "tsc",
-        "prepublish": "npm run build"
+        "prepublishOnly": "npm run build"
     },
     "author": {
         "name": "Kelvin Schoofs",
         "email": "schoofs.kelvin@gmail.com"
     },
     "repository": "SchoofsKelvin/react-dividable/context",
-    "license": "GLP-3.0",
-    "private": true
+    "license": "GLP-3.0"
 }
