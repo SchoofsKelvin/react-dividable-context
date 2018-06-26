@@ -1,8 +1,8 @@
 
 # react-dividable-context
 
-[![GitHub package version](./github.png)](https://github.com/SchoofsKelvin/react-dividable-context) 
-[![NPM](./npm.png)](https://www.npmjs.com/package/react-dividable-context) 
+[![GitHub package version](https://raw.githubusercontent.com/SchoofsKelvin/react-dividable-context/master/github.png)](https://github.com/SchoofsKelvin/react-dividable-context) 
+[![NPM](https://raw.githubusercontent.com/SchoofsKelvin/react-dividable-context/master/npm.png)](https://www.npmjs.com/package/react-dividable-context) 
 
 Demo available on [GitHub Pages](http://github.morle.ga/react-dividable-context/).
 
