@@ -9,14 +9,14 @@ function getBit(keys: Array<string | number | symbol>, key: string | number | sy
     return 2 ** (keys.push(key) - 1);
 }
 
-type EqualFunction<T> = (a: T[keyof T], b: typeof a) => boolean;
+export type EqualFunction<T> = (a: T[keyof T], b: typeof a) => boolean;
 const defaultEquals: EqualFunction<any> = (a, b) => JSON.stringify(a) === JSON.stringify(b);
 
-interface IConsumerProps<T> {
+export interface IConsumerProps<T> {
     children: (value: T) => React.ReactNode;
 }
 
-type ContexterConsumer<T> = React.ComponentType<IConsumerProps<T>>;
+export type ContexterConsumer<T> = React.ComponentType<IConsumerProps<T>>;
 
 function createConsumerClass<T>(Consumer: React.ComponentType<React.ConsumerProps<T>>, bits: number): ContexterConsumer<T> {
     const consumerProps = {
