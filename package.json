@@ -1,7 +1,7 @@
 {
     "name": "react-dividable-context",
     "version": "1.0.0",
-    "description": "An efficient way of having one React Context instead of several, without unnecessary re-rendering",
+    "description": "An efficient way of having one React Context instead of multiple providers, without unnecessary re-rendering",
     "dependencies": {},
     "peerDependencies": {
         "react": "^16.3.0",
@@ -24,6 +24,7 @@
         "name": "Kelvin Schoofs",
         "email": "schoofs.kelvin@gmail.com"
     },
+    "repository": "SchoofsKelvin/react-dividable/context",
     "license": "GLP-3.0",
     "private": true
 }
