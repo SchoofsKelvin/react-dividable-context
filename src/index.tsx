@@ -48,6 +48,8 @@ class NoUpdateComponent extends React.Component {
 export class Contexter<T> {
     public readonly provider: React.ComponentType<React.ProviderProps<T>>;
     public readonly consumer = this.context.Consumer;
+    public readonly Provider = this.provider;
+    public readonly Consumer = this.consumer;
     constructor(protected context: React.Context<T>, protected keys: Array<keyof T>) {
         this.provider = (props) => {
             return <context.Provider value={props.value}>
