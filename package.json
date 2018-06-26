@@ -1,6 +1,6 @@
 {
     "name": "react-dividable-context",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "An efficient way of having one React Context instead of multiple providers, without unnecessary re-rendering",
     "dependencies": {},
     "peerDependencies": {
