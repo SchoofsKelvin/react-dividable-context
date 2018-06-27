@@ -16,12 +16,19 @@ type EqualsFunction<T> = (a: T, b: T) => boolean;
 // Create a new context
 const context = create(defaultValue: T, EqualsFunction<T>);
 
-// The provider/consumer as provided by React.createContext
-const provider = <context.provider/>; // See note below!
-const consumer = <context.consumer/>;
+// The provider/consumer, similar to the ones from React Context
+const provider = <context.Provider/>; // See note below!
+const consumer = <context.Consumer/>;
 
 // A consumer that only updates if the given field(s) update
 const partialConsumer = context.getConsumer(['fieldA', 'fieldB']);
+
+// Otherwise, we can also use the "main" one with the "keys" property
+const listenToFieldA = <context.Consumer keys={['fieldA']} />;
+
+// We can mix a partial and the "keys" prop too
+// This one will listen to fieldA, fieldB and fieldC
+const listenToSeveral = <partialConsumer keys={['fieldC']} />;
 ```
 
 **Important**: Unlike the official Provider, the one exposed by context prevents its children from updating. This allows wrapping your app in the provider and updating the `value` prop, without it having re-rendering the whole app. *All (descendant) consumers will still update.*
@@ -70,7 +77,7 @@ class App extends React.Component<any, IAppState> {
   }
   public render() {
       return (
-          <context.provider value={this.state.value}>
+          <context.provider value={this.state.test}>
             <context.consumer>
                 {test => <p>Something changed! {Date.now()}</p>}
             </context.consumer>
