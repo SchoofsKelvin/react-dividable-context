@@ -12,7 +12,7 @@ const defaultEquals: EqualFunction<any> = (a, b) => JSON.stringify(a) === JSON.s
  */
 function getValue(data: any, path: keyof any | (keyof any)[]) {
     path = Array.isArray(path) ? path : [path];
-    for (const key in path) {
+    for (const key of path) {
         if (!data) return data;
         data = data[key];
     }
@@ -61,15 +61,15 @@ export interface IContextConsumerProps<T> {
 /** Internal Component class */
 export class ContextConsumer<T> extends React.Component<IContextConsumerProps<T> & { data: T, context: DividableContext<T> }, any> {
     public shouldComponentUpdate({ data }: Readonly<{ data: T }>) {
+        // We'll need some data from our props
+        const { data: prev, context: { equals }, keys } = this.props;
         // Not entirely what we would expect, but possible
-        if (!this.props.data || !data) return true;
+        if (!prev || !data) return true;
         // If we don't listen for any keys, we listen for everything
-        if (!this.props.keys) return true;
-        // We'll need the previous data and the equal method
-        const { data: prev, context: { equals } } = this.props;
-        for (const key in this.props.keys) {
+        if (!keys) return true;
+        for (const key of keys) {
             const prevValue = getValue(prev, key);
-            const dataValue = getValue(prev, key);
+            const dataValue = getValue(data, key);
             // If they don't match, something we care about changed
             if (!equals(prevValue, dataValue)) return true;
         }
