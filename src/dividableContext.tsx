@@ -4,6 +4,15 @@ import * as React from 'react';
 export type EqualFunction<T> = (a: T[keyof T], b: typeof a) => boolean;
 const defaultEquals: EqualFunction<any> = (a, b) => JSON.stringify(a) === JSON.stringify(b);
 
+function getValue(data: any, path: keyof any | (keyof any)[]) {
+    path = Array.isArray(path) ? path : [path];
+    for (const key in path) {
+        if (!data) return data;
+        data = data[key];
+    }
+    return data;
+}
+
 class NoUpdateComponent extends React.Component {
     public shouldComponentUpdate(): false {
         return false;
@@ -28,22 +37,15 @@ export interface IContextConsumerProps<T> {
 }
 export class ContextConsumer<T> extends React.Component<IContextConsumerProps<T> & { data: T, context: DividableContext<T> }, any> {
     public shouldComponentUpdate({ data }: Readonly<{ data: T }>) {
-        if (!this.props.data) return true;
+        if (!this.props.data || !data) return true;
+        if (!this.props.keys) return true;
         const { data: prev, context: { equals } } = this.props;
-        for (const key in prev) {
-            if (!equals(prev[key], data[key])) {
-                if (this.listensToKey(key)) return true;
-            }
-        }
-        for (const key in data) {
-            if (!equals(prev[key], data[key])) {
-                if (this.listensToKey(key)) return true;
-            }
+        for (const key in this.props.keys) {
+            const prevValue = getValue(prev, key);
+            const dataValue = getValue(prev, key);
+            if (!equals(prevValue, dataValue)) return true;
         }
         return false;
-    }
-    public listensToKey(key: keyof T) {
-        return !this.props.keys || this.props.keys.find(k => k === key);
     }
     public render() {
         return this.props.children(this.props.data);
