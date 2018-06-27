@@ -45,19 +45,17 @@ class NoUpdateComponent extends React.Component {
     }
 }
 
-export class Contexter<T> {
+export class DividableContext<T> {
     public readonly provider: React.ComponentType<React.ProviderProps<T>>;
+    public readonly Provider: React.ComponentType<React.ProviderProps<T>>;
     public readonly consumer = this.context.Consumer;
-    public readonly Provider = this.provider;
     public readonly Consumer = this.consumer;
     constructor(protected context: React.Context<T>, protected keys: Array<keyof T>) {
-        this.provider = (props) => {
-            return <context.Provider value={props.value}>
-                <NoUpdateComponent>
-                    {props.children}
-                </NoUpdateComponent>
-            </context.Provider>;
-        };
+        this.provider = this.Provider = props => (
+            <this.context.Provider value={props.value}>
+                <NoUpdateComponent children={props.children} />
+            </this.context.Provider>
+        );
     }
     public getConsumer<K extends keyof T>(keys: K[]): ContexterConsumer<T> {
         const bits = keys.reduce((result, key) => result | getBit(this.keys, key), 0);
@@ -81,7 +79,7 @@ export function create<T extends object>(defaultValue: T, equals: EqualFunction<
         }
         return result;
     });
-    return new Contexter(context, keys);
+    return new DividableContext(context, keys);
 }
 
 export default create;
