@@ -1,40 +1,8 @@
 
 import * as React from 'react';
 
-function getBit(keys: Array<string | number | symbol>, key: string | number | symbol) {
-    const index = keys.indexOf(key);
-    if (index !== -1) {
-        return 2 ** index;
-    }
-    return 2 ** (keys.push(key) - 1);
-}
-
 export type EqualFunction<T> = (a: T[keyof T], b: typeof a) => boolean;
 const defaultEquals: EqualFunction<any> = (a, b) => JSON.stringify(a) === JSON.stringify(b);
-
-export interface IConsumerProps<T> {
-    children: (value: T) => React.ReactNode;
-}
-
-export type ContexterConsumer<T> = React.ComponentType<IConsumerProps<T>>;
-
-function createConsumerClass<T>(Consumer: React.ComponentType<React.ConsumerProps<T>>, bits: number): ContexterConsumer<T> {
-    const consumerProps = {
-        observedBits: bits,
-        unstable_observedBits: bits,
-    };
-    // tslint:disable-next-line:no-shadowed-variable
-    return class ContexterConsumer extends React.Component<IConsumerProps<T>, any, any> {
-        constructor(props: IConsumerProps<T> & { children?: React.ReactNode; }, context?: any) {
-            super(props, context);
-        }
-        public render() {
-            return <Consumer {...consumerProps}>
-                {this.props.children}
-            </Consumer>;
-        }
-    } as any;
-}
 
 class NoUpdateComponent extends React.Component {
     public shouldComponentUpdate(): false {
@@ -45,41 +13,65 @@ class NoUpdateComponent extends React.Component {
     }
 }
 
-export class DividableContext<T> {
-    public readonly provider: React.ComponentType<React.ProviderProps<T>>;
-    public readonly Provider: React.ComponentType<React.ProviderProps<T>>;
-    public readonly consumer = this.context.Consumer;
-    public readonly Consumer = this.consumer;
-    constructor(protected context: React.Context<T>, protected keys: Array<keyof T>) {
-        this.provider = this.Provider = props => (
-            <this.context.Provider value={props.value}>
-                <NoUpdateComponent children={props.children} />
-            </this.context.Provider>
-        );
-    }
-    public getConsumer<K extends keyof T>(keys: K[]): ContexterConsumer<T> {
-        const bits = keys.reduce((result, key) => result | getBit(this.keys, key), 0);
-        return createConsumerClass(this.context.Consumer, bits);
+export interface IContextProviderProps<T> {
+    value: T;
+}
+export class ContextProvider<T> extends React.Component<IContextProviderProps<T> & { defaultValue: T }, any> {
+    public render() {
+        return <NoUpdateComponent children={this.props.children} />;
     }
 }
 
-export function create<T extends object>(defaultValue: T, equals: EqualFunction<T> = defaultEquals) {
-    const keys: Array<keyof T> = [];
-    const context = React.createContext(defaultValue, (prev, next) => {
-        let result = 0;
+export interface IContextConsumerProps<T> {
+    keys?: (keyof T)[];
+    children: (data: T) => React.ReactNode;
+}
+export class ContextConsumer<T> extends React.Component<IContextConsumerProps<T> & { data: T, context: DividableContext<T> }, any> {
+    public shouldComponentUpdate({ data }: Readonly<{ data: T }>) {
+        if (!this.props.data) return true;
+        const { data: prev, context: { equals } } = this.props;
         for (const key in prev) {
-            if (!equals(prev[key], next[key])) {
-                result = result | getBit(keys, key);
+            if (!equals(prev[key], data[key])) {
+                if (this.listensToKey(key)) return true;
             }
         }
-        for (const key in next) {
-            if (!equals(prev[key], next[key])) {
-                result = result | getBit(keys, key);
+        for (const key in data) {
+            if (!equals(prev[key], data[key])) {
+                if (this.listensToKey(key)) return true;
             }
         }
-        return result;
-    });
-    return new DividableContext(context, keys);
+        return false;
+    }
+    public listensToKey(key: keyof T) {
+        return !this.props.keys || this.props.keys.find(k => k === key);
+    }
+    public render() {
+        return this.props.children(this.props.data);
+    }
+}
+
+export class DividableContext<T> {
+    protected readonly nativecontext: React.Context<T>;
+    public readonly provider: React.ComponentType<IContextProviderProps<T>>;
+    public readonly Provider: React.ComponentType<IContextProviderProps<T>>;
+    public readonly consumer: React.ComponentType<IContextConsumerProps<T>>;
+    public readonly Consumer: React.ComponentType<IContextConsumerProps<T>>;
+    constructor(protected defaultValue: T, public readonly equals: EqualFunction<T> = defaultEquals) {
+        this.nativecontext = React.createContext(this.defaultValue);
+        this.provider = this.Provider = this.nativecontext.Provider;
+        this.consumer = this.Consumer = props => (
+            <this.nativecontext.Consumer>
+                { data => <ContextConsumer {...props} context={this} data={data}/>}
+            </this.nativecontext.Consumer>
+        );
+    }
+    public getConsumer(keys: (keyof T)[]): React.ComponentType<IContextConsumerProps<T>> {
+        return props => <this.Consumer {...props} keys={[...keys, ...(props.keys || [])]} children={props.children} />;
+    }
+}
+
+export function create<T extends object>(defaultValue: T, equals?: EqualFunction<T>) {
+    return new DividableContext(defaultValue, equals);
 }
 
 export default create;
