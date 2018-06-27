@@ -32,7 +32,7 @@ export class ContextProvider<T> extends React.Component<IContextProviderProps<T>
 }
 
 export interface IContextConsumerProps<T> {
-    keys?: (keyof T)[];
+    keys?: (keyof T | (keyof T)[])[];
     children: (data: T) => React.ReactNode;
 }
 export class ContextConsumer<T> extends React.Component<IContextConsumerProps<T> & { data: T, context: DividableContext<T> }, any> {
@@ -67,7 +67,7 @@ export class DividableContext<T> {
             </this.nativecontext.Consumer>
         );
     }
-    public getConsumer(keys: (keyof T)[]): React.ComponentType<IContextConsumerProps<T>> {
+    public getConsumer(keys: (keyof T | (keyof T)[])[]): React.ComponentType<IContextConsumerProps<T>> {
         return props => <this.Consumer {...props} keys={[...keys, ...(props.keys || [])]} children={props.children} />;
     }
 }
