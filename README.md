@@ -3,6 +3,7 @@
 
 [![GitHub package version](https://raw.githubusercontent.com/SchoofsKelvin/react-dividable-context/master/github.png)](https://github.com/SchoofsKelvin/react-dividable-context) 
 [![NPM](https://raw.githubusercontent.com/SchoofsKelvin/react-dividable-context/master/npm.png)](https://www.npmjs.com/package/react-dividable-context) 
+[![Donate](https://raw.githubusercontent.com/SchoofsKelvin/react-dividable-context/master/paypal.png)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=XUZDN9LQ3MDV8)
 
 Demo available on [GitHub Pages](http://github.morle.ga/react-dividable-context/).
 
@@ -29,6 +30,10 @@ const listenToFieldA = <context.Consumer keys={['fieldA']} />;
 // We can mix a partial and the "keys" prop too
 // This one will listen to fieldA, fieldB and fieldC
 const listenToSeveral = <partialConsumer keys={['fieldC']} />;
+
+// We can also check for "sub keys"
+// This'll listen to fieldA and fieldB.subA
+const listenForSubKey = <context.Consumer keys={['fieldA', ['fieldB', 'subA']]} />;
 ```
 
 **Important**: Unlike the official Provider, the one exposed by context prevents its children from updating. This allows wrapping your app in the provider and updating the `value` prop, without it having re-rendering the whole app. *All (descendant) consumers will still update.*
