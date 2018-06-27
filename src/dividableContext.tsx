@@ -33,10 +33,13 @@ class NoUpdateComponent extends React.Component {
 export interface IContextProviderProps<T> {
     /** The current value consumers down the hierarchy should receive (unless overwritten by another Provider from the same context) */
     value: T;
+    /** Whether to block the children from updating (unless forceUpdate/setState is used on them) */
+    noUpdate?: boolean;
 }
 /** Internal Component class */
 export class ContextProvider<T> extends React.Component<IContextProviderProps<T> & { defaultValue: T }, any> {
     public render() {
+        if (!this.props.noUpdate) return this.props.children;
         return <NoUpdateComponent children={this.props.children} />;
     }
 }
